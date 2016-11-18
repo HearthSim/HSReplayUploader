@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSReplayUploader", "HSReplayUploader\HSReplayUploader.csproj", "{19311B82-6170-44B1-8B07-666B1F92D17E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSReplayUploaderDemo", "HSReplayUploaderDemo\HSReplayUploaderDemo.csproj", "{EBEBBF1B-9E52-4B53-A5C3-BBEF3A06C6F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HearthMirror", "HearthMirror\HearthMirror\HearthMirror.csproj", "{1694A2F8-645A-4263-A6AB-FC26323FD675}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HSReplay", "HSReplay-Api\HSReplay\HSReplay.csproj", "{A6264074-8A96-417C-9673-5EE7E9820B1F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19311B82-6170-44B1-8B07-666B1F92D17E}.Debug|x86.ActiveCfg = Debug|x86
+		{19311B82-6170-44B1-8B07-666B1F92D17E}.Debug|x86.Build.0 = Debug|x86
+		{19311B82-6170-44B1-8B07-666B1F92D17E}.Release|x86.ActiveCfg = Release|x86
+		{19311B82-6170-44B1-8B07-666B1F92D17E}.Release|x86.Build.0 = Release|x86
+		{EBEBBF1B-9E52-4B53-A5C3-BBEF3A06C6F6}.Debug|x86.ActiveCfg = Debug|x86
+		{EBEBBF1B-9E52-4B53-A5C3-BBEF3A06C6F6}.Debug|x86.Build.0 = Debug|x86
+		{EBEBBF1B-9E52-4B53-A5C3-BBEF3A06C6F6}.Release|x86.ActiveCfg = Release|x86
+		{EBEBBF1B-9E52-4B53-A5C3-BBEF3A06C6F6}.Release|x86.Build.0 = Release|x86
+		{1694A2F8-645A-4263-A6AB-FC26323FD675}.Debug|x86.ActiveCfg = Debug|x86
+		{1694A2F8-645A-4263-A6AB-FC26323FD675}.Debug|x86.Build.0 = Debug|x86
+		{1694A2F8-645A-4263-A6AB-FC26323FD675}.Release|x86.ActiveCfg = Release|x86
+		{1694A2F8-645A-4263-A6AB-FC26323FD675}.Release|x86.Build.0 = Release|x86
+		{A6264074-8A96-417C-9673-5EE7E9820B1F}.Debug|x86.ActiveCfg = Debug|x86
+		{A6264074-8A96-417C-9673-5EE7E9820B1F}.Debug|x86.Build.0 = Debug|x86
+		{A6264074-8A96-417C-9673-5EE7E9820B1F}.Release|x86.ActiveCfg = Release|x86
+		{A6264074-8A96-417C-9673-5EE7E9820B1F}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

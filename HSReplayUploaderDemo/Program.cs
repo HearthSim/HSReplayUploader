@@ -41,7 +41,7 @@ namespace HSReplayUploaderDemo
 			//4. Create new HearthstoneWatcher instance and hook onto desired events.
 			string hearthstoneDir = null; //MyConfig[HearthstoneInstallDir]
 			var watcher = new HearthstoneWatcher(client, new[] {SceneMode.FRIENDLY}, hearthstoneDir);
-			watcher.OnGameStart += (sender, eventArgs) => Console.WriteLine($"A new game started! LastKnownScene={eventArgs.Mode}");
+			watcher.OnGameStart += (sender, eventArgs) => Console.WriteLine($"A new game started! LastKnownScene={eventArgs.Mode}, GameHandle={eventArgs.GameHandle}");
 			watcher.OnGameEnd += (sender, eventArgs) => Console.WriteLine($"Game ended! UploadSuccessful={eventArgs.UploadSuccessful}, Exception={eventArgs.Exception}");
 
 			while(true)

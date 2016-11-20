@@ -70,7 +70,7 @@ namespace HSReplayUploader
 			_deckWatcher.Stop();
 			var build = Util.GetHearthstoneBuild(_logManager.HearthstoneDir);
 			_metaData = await UploadMetaDataGenerator.Generate(deck, build);
-			OnGameStart?.Invoke(this, new GameStartEventArgs(_deckWatcher.LastKnownMode));
+			OnGameStart?.Invoke(this, new GameStartEventArgs(_deckWatcher.LastKnownMode, _metaData.GameHandle));
 		}
 
 		private async void HandleGameEnd(object sender, LogGameEndEventArgs args)
@@ -124,9 +124,15 @@ namespace HSReplayUploader
 			/// </summary>
 			public SceneMode Mode { get; }
 
-			internal GameStartEventArgs(SceneMode mode)
+			/// <summary>
+			/// GameHandle of the started game.
+			/// </summary>
+			public string GameHandle { get; }
+
+			internal GameStartEventArgs(SceneMode mode, string gameHandle)
 			{
 				Mode = mode;
+				GameHandle = gameHandle;
 			}
 		}
 	}

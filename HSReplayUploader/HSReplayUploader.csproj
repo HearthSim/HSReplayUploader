@@ -66,6 +66,7 @@
     <Compile Include="HearthstoneEnums\BnetGameType.cs" />
     <Compile Include="HearthstoneEnums\FormatType.cs" />
     <Compile Include="HearthstoneEnums\GameType.cs" />
+    <Compile Include="HearthstoneEnums\SceneMode.cs" />
     <Compile Include="HearthstoneWatcher.cs" />
     <Compile Include="HsReplayClient.cs" />
     <Compile Include="LogConfigHelper.cs" />

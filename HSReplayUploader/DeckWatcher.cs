@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HearthMirror;
-using HearthMirror.Enums;
 using HearthMirror.Objects;
+using HSReplayUploader.HearthstoneEnums;
 
 namespace HSReplayUploader
 {
 	internal class DeckWatcher
 	{
+		private readonly SceneMode[] _modes;
 		public List<Deck> Decks { get; private set; }
 		public long SelectedDeckId { get; private set; }
+		public SceneMode LastKnownMode { get; private set; }
 
 		public Deck SelectedDeck => Decks?.FirstOrDefault(x => x.Id == SelectedDeckId);
+
+		public DeckWatcher(SceneMode[] modes)
+		{
+			_modes = modes;
+		}
 
 		private bool _running;
 		private bool _watch;
@@ -49,11 +56,15 @@ namespace HSReplayUploader
 		{
 			if(!Util.HearthstoneIsRunning)
 				return;
-			var scene = Reflection.GetCurrentSceneMode();
-			if(scene != SceneMode.FRIENDLY && scene != SceneMode.GAMEPLAY)
+			var scene = (int)Reflection.GetCurrentSceneMode();
+			if(scene != (int)SceneMode.GAMEPLAY)
 			{
-				Decks = null;
-				return;
+				LastKnownMode = (SceneMode)scene;
+				if(!_modes.Contains((SceneMode)scene))
+				{
+					Decks = null;
+					return;
+				}
 			}
 			if(Decks == null)
 				Decks = Reflection.GetDecks();

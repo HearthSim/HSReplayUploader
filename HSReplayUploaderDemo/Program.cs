@@ -1,6 +1,6 @@
 using System;
-using System.Threading;
 using HSReplayUploader;
+using HSReplayUploader.HearthstoneEnums;
 
 namespace HSReplayUploaderDemo
 {
@@ -32,15 +32,16 @@ namespace HSReplayUploaderDemo
 			//MyConfig["HSReplayUserToken"] = token;
 
 			//2b. Create new HsReplayClient, passing the existing user token
-			//var client = new HSReplay(MyApiKey, MyConfig.HSReplayUserToken);
+			//var client = new HSReplay(MyApiKey, MyConfig[HSReplayUserToken]);
 
 			//3. Claim account process [NOT FINAL VERSION]
 			var claimUrl = client.GetClaimAccountUrl().Result;
 			Console.WriteLine($"Visit [https://hsreplay.net/{claimUrl}] to claim the account");
 
 			//4. Create new HearthstoneWatcher instance and hook onto desired events.
-			var watcher = new HearthstoneWatcher(client);
-			watcher.OnGameStart += (sender, eventArgs) => Console.WriteLine("A new game started!");
+			string hearthstoneDir = null; //MyConfig[HearthstoneInstallDir]
+			var watcher = new HearthstoneWatcher(client, new[] {SceneMode.FRIENDLY}, hearthstoneDir);
+			watcher.OnGameStart += (sender, eventArgs) => Console.WriteLine($"A new game started! LastKnownScene={eventArgs.Mode}");
 			watcher.OnGameEnd += (sender, eventArgs) => Console.WriteLine($"Game ended! UploadSuccessful={eventArgs.UploadSuccessful}, Exception={eventArgs.Exception}");
 
 			while(true)

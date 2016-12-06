@@ -30,3 +30,5 @@ _ReSharper*/
 HearthMirror/
 HSReplay-Api/
 packages/
+
+*.nupkg

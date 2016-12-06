@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>HSReplayUploader</id>
+    <title>HSReplayUploader</title>
+    <version>1.0.1</version>
+    <authors>HearthSim</authors>
+    <owners>HearthSim</owners>
+    <projectUrl>https://github.com/HearthSim/HSReplayUploader</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>HSReplay uploading library</description>
+    <releaseNotes>+ Added GameHandle to OnGameStart</releaseNotes>
+    <copyright>Copyright HearthSim 2016</copyright>
+  </metadata>
+  <files>
+    <file src="HSReplayUploader\bin\x86\Release\HSReplayUploader.dll" target="lib/net45/HSReplayUploader.dll" />
+  </files>
+</package>

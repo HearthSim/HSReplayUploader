@@ -59,5 +59,11 @@ namespace HSReplayUploader
 		/// </summary>
 		/// <returns></returns>
 		public async Task<string> GetClaimAccountUrl() => await _client.GetClaimAccountUrl(UploadToken);
+
+		/// <summary>
+		/// Returns the BattleTag of the user if the account was claimed, null otherwise.
+		/// </summary>
+		/// <returns></returns>
+		public async Task<string> GetLinkedBattleTag() => (await _client.GetAccountStatus(UploadToken))?.User?.Username;
 	}
 }

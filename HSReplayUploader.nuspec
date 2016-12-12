@@ -3,13 +3,13 @@
   <metadata>
     <id>HSReplayUploader</id>
     <title>HSReplayUploader</title>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <authors>HearthSim</authors>
     <owners>HearthSim</owners>
     <projectUrl>https://github.com/HearthSim/HSReplayUploader</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>HSReplay uploading library</description>
-    <releaseNotes>+ Added GameHandle to OnGameStart</releaseNotes>
+    <releaseNotes>* Repackaged for 4.5</releaseNotes>
     <copyright>Copyright HearthSim 2016</copyright>
   </metadata>
   <files>

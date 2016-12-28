@@ -34,18 +34,38 @@ namespace HSReplayUploaderDemo
 			//2b. Create new HsReplayClient, passing the existing user token
 			//var client = new HSReplay(MyApiKey, MyConfig[HSReplayUserToken]);
 
-			//3. Claim account process [NOT FINAL VERSION]
+			//3. Claim account process
 			var claimUrl = client.GetClaimAccountUrl().Result;
-			Console.WriteLine($"Visit [https://hsreplay.net/{claimUrl}] to claim the account");
+			Console.WriteLine($"Visit [{claimUrl}] to claim the account");
 
 			//4. Create new HearthstoneWatcher instance and hook onto desired events.
 			string hearthstoneDir = null; //MyConfig[HearthstoneInstallDir]
-			var watcher = new HearthstoneWatcher(client, new[] {SceneMode.FRIENDLY}, hearthstoneDir);
+			var watcher = new HearthstoneWatcher(client, new[] {SceneMode.FRIENDLY, SceneMode.ADVENTURE}, hearthstoneDir);
 			watcher.OnGameStart += (sender, eventArgs) => Console.WriteLine($"A new game started! LastKnownScene={eventArgs.Mode}, GameHandle={eventArgs.GameHandle}");
 			watcher.OnGameEnd += (sender, eventArgs) => Console.WriteLine($"Game ended! UploadSuccessful={eventArgs.UploadSuccessful}, Exception={eventArgs.Exception}");
 
 			while(true)
-				Console.ReadKey();
+			{
+				switch(Console.ReadKey().KeyChar)
+				{
+					case 'r':
+						Console.WriteLine("Starting wacher...");
+						watcher.Start().Wait();
+						Console.WriteLine("Started wacher...");
+						break;
+					case 's':
+						Console.WriteLine("Stopping watcher...");
+						watcher.Stop().Wait();
+						Console.WriteLine("Stopped watcher.");
+						break;
+					case 'a':
+						Console.WriteLine("Linked account: " + client.GetLinkedBattleTag().Result + " (not claimed if empty)");
+						break;
+					case 'q':
+						return;
+				}
+			}
+
 		}
 	}
 }

@@ -28,10 +28,25 @@ namespace HSReplayUploader.LogReader
 		private LogWatcher _logWatcher;
 		private GameState _gameState = GameState.InMenu;
 
-		internal async Task StartLogReader(string hearthstoneDir)
+		public LogManager(string hearthstoneDir)
 		{
+			HearthstoneDir = hearthstoneDir;
+		}
 
-			HearthstoneDir = hearthstoneDir ?? await Util.GetHearthstoneDir();
+		public async Task Stop()
+		{
+			_logWatcher.OnNewLine -= OnLogWatcherOnOnNewLine;
+			_logWatcher.OnLogFound -= LogWatcherOnOnLogFound;
+			await _logWatcher.Stop();
+		}
+
+		internal async Task StartLogReader()
+		{
+			_powerLog.Clear();
+			_gameState = GameState.InMenu;
+			FoundLog = false;
+			if(string.IsNullOrEmpty(HearthstoneDir))
+				HearthstoneDir = await Util.GetHearthstoneDir();
 			var readerInfo = new LogReaderInfo() {
 				StartsWithFilters = new[] { "GameState." },
 				FilePath = Path.Combine(HearthstoneDir, "Logs", "Power.log"),

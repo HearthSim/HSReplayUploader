@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using HSReplay;
+using System.Threading.Tasks;
 using HSReplayUploader.HearthstoneEnums;
 using HSReplayUploader.LogReader;
 using HSReplayUploader.LogReader.EventArgs;
@@ -15,9 +16,10 @@ namespace HSReplayUploader
 	{
 		private readonly HsReplayClient _client;
 		private readonly SceneMode[] _allowedModes;
-		private readonly LogManager _logManager = new LogManager();
+		private readonly LogManager _logManager;
 		private readonly DeckWatcher _deckWatcher;
 		private UploadMetaData _metaData;
+		private bool _running;
 
 		/// <summary>
 		/// 
@@ -57,11 +59,39 @@ namespace HSReplayUploader
 		{ 
 			_client = client;
 			_allowedModes = allowedModes;
+			_logManager = new LogManager(hearthstoneDir);
+			_deckWatcher = new DeckWatcher(allowedModes);
+		}
+
+		/// <summary>
+		/// Starts the watcher.
+		/// If hearthstoneDir was not provided in the ctor, this will not return until Hearthstone is running and the directory was detected.
+		/// </summary>
+		/// <returns></returns>
+		public async Task Start()
+		{
+			if(_running)
+				return;
+			_running = true;
 			_logManager.OnGameStart += HandleGameStart;
 			_logManager.OnGameEnd += HandleGameEnd;
-			_logManager.StartLogReader(hearthstoneDir).Forget();
-			_deckWatcher = new DeckWatcher(allowedModes);
 			_deckWatcher.Run();
+			await _logManager.StartLogReader();
+		}
+
+		/// <summary>
+		/// Stops the watcher.
+		/// </summary>
+		/// <returns></returns>
+		public async Task Stop()
+		{
+			if(!_running)
+				return;
+			_logManager.OnGameStart -= HandleGameStart;
+			_logManager.OnGameEnd -= HandleGameEnd;
+			_deckWatcher.Stop();
+			await _logManager.Stop();
+			_running = false;
 		}
 
 		private async void HandleGameStart(object sender, LogGameStartEventArgs args)

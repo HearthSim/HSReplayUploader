@@ -3,13 +3,14 @@
   <metadata>
     <id>HSReplayUploader</id>
     <title>HSReplayUploader</title>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <authors>HearthSim</authors>
     <owners>HearthSim</owners>
     <projectUrl>https://github.com/HearthSim/HSReplayUploader</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>HSReplay uploading library</description>
-    <releaseNotes>* Repackaged for 4.5</releaseNotes>
+    <releaseNotes>+ Added HSReplayClient.GetLinkedBattleTag()
++ Added HearthstoneWachter.Start() and HearthstoneWatcher.Stop()</releaseNotes>
     <copyright>Copyright HearthSim 2016</copyright>
   </metadata>
   <files>

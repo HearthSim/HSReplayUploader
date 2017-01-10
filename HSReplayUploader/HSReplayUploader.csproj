@@ -70,6 +70,7 @@
     <Compile Include="HearthstoneEnums\SceneMode.cs" />
     <Compile Include="HearthstoneWatcher.cs" />
     <Compile Include="HsReplayClient.cs" />
+    <Compile Include="ILog.cs" />
     <Compile Include="LogConfigHelper.cs" />
     <Compile Include="LogConfig\LogConfig.cs" />
     <Compile Include="LogConfig\LogConfigConstants.cs" />

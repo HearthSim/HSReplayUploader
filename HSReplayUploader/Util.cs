@@ -8,13 +8,15 @@ using static HSReplayUploader.HearthstoneEnums.BnetGameType;
 
 namespace HSReplayUploader
 {
-	internal static class Util
+	public static class Util
 	{
+		public static ILog DebugLog { get; set; }
+
 		private static Process HearthstoneProc => Process.GetProcessesByName("Hearthstone").FirstOrDefault();
 
-		public static bool HearthstoneIsRunning => HearthstoneProc != null;
+		internal static bool HearthstoneIsRunning => HearthstoneProc != null;
 
-		public static async Task<string> GetHearthstoneDir()
+		internal static async Task<string> GetHearthstoneDir()
 		{
 			Process proc;
 			while((proc = HearthstoneProc) == null)
@@ -23,7 +25,7 @@ namespace HSReplayUploader
 			return dir;
 		}
 
-		public static int? GetHearthstoneBuild(string installDir)
+		internal static int? GetHearthstoneBuild(string installDir)
 		{
 			if(string.IsNullOrEmpty(installDir))
 				return null;
@@ -31,7 +33,7 @@ namespace HSReplayUploader
 			return !File.Exists(exe) ? (int?)null : FileVersionInfo.GetVersionInfo(exe).FilePrivatePart;
 		}
 
-		public static int GetBnetGameType(int gameType, int format) => (int)GetBnetGameType((GameType)gameType, (FormatType)format);
+		internal static int GetBnetGameType(int gameType, int format) => (int)GetBnetGameType((GameType)gameType, (FormatType)format);
 
 		private static BnetGameType GetBnetGameType(GameType gameType, FormatType format)
 		{
@@ -69,7 +71,7 @@ namespace HSReplayUploader
 
 	internal static class TaskExtensions
 	{
-		public static void Forget(this Task task)
+		internal static void Forget(this Task task)
 		{
 		}
 	}

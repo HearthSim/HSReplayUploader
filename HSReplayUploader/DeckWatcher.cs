@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,6 +26,7 @@ namespace HSReplayUploader
 
 		public void Run()
 		{
+			Util.DebugLog?.WriteLine("DeckWatcher.Run: Starting.");
 			_watch = true;
 			if(!_running)
 				Watch();
@@ -34,6 +34,7 @@ namespace HSReplayUploader
 
 		public void Stop()
 		{
+			Util.DebugLog?.WriteLine("DeckWatcher.Watch: stopping.");
 			_watch = false;
 			Decks = null;
 			SelectedDeckId = 0;
@@ -41,6 +42,7 @@ namespace HSReplayUploader
 
 		private async void Watch()
 		{
+			Util.DebugLog?.WriteLine("DeckWatcher.Watch: watching...");
 			_running = true;
 			while(_watch)
 			{
@@ -50,6 +52,7 @@ namespace HSReplayUploader
 				Update();
 			}
 			_running = false;
+			Util.DebugLog?.WriteLine("DeckWatcher.Watch: stopped watching.");
 		}
 
 		private void Update()
@@ -70,7 +73,11 @@ namespace HSReplayUploader
 				Decks = Reflection.GetDecks();
 			var id  = Reflection.GetSelectedDeckInMenu();
 			if(id > 0)
+			{
+				if(id != SelectedDeckId)
+					Util.DebugLog?.WriteLine($"DeckWatcher.Update: SelectedDeck={id}");
 				SelectedDeckId = id;
+			}
 		}
 	}
 }

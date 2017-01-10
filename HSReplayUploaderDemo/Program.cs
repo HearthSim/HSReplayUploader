@@ -4,12 +4,22 @@ using HSReplayUploader.HearthstoneEnums;
 
 namespace HSReplayUploaderDemo
 {
+	internal class Log : ILog
+	{
+		public void WriteLine(string msg)
+		{
+			Console.WriteLine(msg);
+		}
+	}
+
 	internal class Program
 	{
 		const string MyApiKey = "YOUR_API_KEY";
 
 		private static void Main(string[] args)
 		{
+			Util.DebugLog = new Log();
+
 			//1. Ensure Hearthstone is generating the Power.log file
 			var logConfigState = LogConfigHelper.VerifyLogConfig();
 			switch(logConfigState.State)

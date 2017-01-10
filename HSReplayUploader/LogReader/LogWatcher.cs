@@ -34,8 +34,12 @@ namespace HSReplayUploader.LogReader
 
 		public void Start(DateTime startingPoint)
 		{
+			Util.DebugLog?.WriteLine("LogWatcher.Start: Starting...");
 			if(_running)
+			{
+				Util.DebugLog?.WriteLine("LogWatcher.Start: already running");
 				return;
+			}
 			MoveOrDeleteLogFile();
 			_startingPoint = startingPoint;
 			_stop = false;
@@ -65,6 +69,7 @@ namespace HSReplayUploader.LogReader
 						}
 					}
 					File.Move(_info.FilePath, old);
+					Util.DebugLog?.WriteLine("LogWatcher: Removed old Power.log");
 				}
 				catch
 				{
@@ -81,16 +86,19 @@ namespace HSReplayUploader.LogReader
 
 		public async Task Stop()
 		{
+			Util.DebugLog?.WriteLine("LogWatcher.Stop: Stopping...");
 			_stop = true;
 			while(_running || _thread == null || _thread.ThreadState == ThreadState.Unstarted)
 				await Task.Delay(50);
 			await Task.Factory.StartNew(() => _thread?.Join());
+			Util.DebugLog?.WriteLine("LogWatcher.Stop: Stopped.");
 		}
 
 		private void ReadLogFile()
 		{
 			_running = true;
 			_offset = FindInitialOffset();
+			Util.DebugLog?.WriteLine($"LogWatcher.ReadLogFile: offset={_offset}");
 			while(!_stop)
 			{
 				var fileInfo = new FileInfo(_info.FilePath);
@@ -100,6 +108,7 @@ namespace HSReplayUploader.LogReader
 					{
 						_logFileExists = true;
 						OnLogFound?.Invoke(this, new LogFoundEventArgs(_info.Name));
+						Util.DebugLog?.WriteLine("LogWatcher.ReadLogFile: found " + _info.Name);
 					}
 					using(var fs = new FileStream(_info.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 					{

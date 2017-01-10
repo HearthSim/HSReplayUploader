@@ -63,6 +63,7 @@ namespace HSReplayUploader
 			_logManager = new LogManager(hearthstoneDir);
 			_deckWatcher = new DeckWatcher(allowedModes);
 			_procWatcher = new ProcWatcher();
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher: HearthstoneDir={hearthstoneDir}, allowedModes={allowedModes.Select(x => x.ToString()).Aggregate((c, n) => c + ", " + n)}");
 		}
 
 		/// <summary>
@@ -72,8 +73,12 @@ namespace HSReplayUploader
 		/// <returns></returns>
 		public async Task Start()
 		{
+			Util.DebugLog?.WriteLine("HearthstoneWatcher.Start: Starting...");
 			if(_running)
+			{
+				Util.DebugLog?.WriteLine("HearthstoneWatcher.Start: Watcher already running");
 				return;
+			}
 			_running = true;
 			_procWatcher.OnProcStopped += ProcWatcherOnProcStopped;
 			_procWatcher.OnProcStarted += ProcWatcherOnProcStarted;
@@ -82,6 +87,7 @@ namespace HSReplayUploader
 			_procWatcher.Run();
 			_deckWatcher.Run();
 			await _logManager.StartLogReader();
+			Util.DebugLog?.WriteLine("HearthstoneWatcher.Start: Running.");
 		}
 
 		private void ProcWatcherOnProcStarted(object sender) => Util.DebugLog?.WriteLine("HearthstoneWatcher: Found proc");
@@ -100,8 +106,12 @@ namespace HSReplayUploader
 		/// <returns></returns>
 		public async Task Stop()
 		{
+			Util.DebugLog?.WriteLine("HearthstoneWatcher.Stop: Stopping...");
 			if(!_running)
+			{
+				Util.DebugLog?.WriteLine("HearthstoneWatcher.Stop: Watcher is not running.");
 				return;
+			}
 			_procWatcher.OnProcStopped -= ProcWatcherOnProcStopped;
 			_procWatcher.OnProcStarted -= ProcWatcherOnProcStarted;
 			_logManager.OnGameStart -= HandleGameStart;
@@ -110,6 +120,7 @@ namespace HSReplayUploader
 			_deckWatcher.Stop();
 			await _logManager.Stop();
 			_running = false;
+			Util.DebugLog?.WriteLine("HearthstoneWatcher.Stop: Stopped.");
 		}
 
 		private async void HandleGameStart(object sender, LogGameStartEventArgs args)
@@ -117,15 +128,19 @@ namespace HSReplayUploader
 			var deck = _deckWatcher.SelectedDeck;
 			_deckWatcher.Stop();
 			var build = Util.GetHearthstoneBuild(_logManager.HearthstoneDir);
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: foundDeck={deck != null}, build={build}");
 			_metaData = await UploadMetaDataGenerator.Generate(deck, build);
 			OnGameStart?.Invoke(this, new GameStartEventArgs(_deckWatcher.LastKnownMode, _metaData.GameHandle));
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: Game Started. LastKnownMode={_deckWatcher.LastKnownMode}, GameHandle={_metaData.GameHandle}");
 		}
 
 		private async void HandleGameEnd(object sender, LogGameEndEventArgs args)
 		{
 			Exception exception = null;
 			string replayUrl = null;
-			if(_allowedModes.Contains(_deckWatcher.LastKnownMode))
+			var uploadGame = _allowedModes.Contains(_deckWatcher.LastKnownMode);
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} (LastKnownMode={_deckWatcher.LastKnownMode})");
+			if(uploadGame)
 			{
 				try
 				{
@@ -136,6 +151,7 @@ namespace HSReplayUploader
 					exception = ex;
 				}
 			}
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Upload Successful={replayUrl != null}, Exception={exception}");
 			OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData.GameHandle, exception));
 			_deckWatcher.Run();
 		}

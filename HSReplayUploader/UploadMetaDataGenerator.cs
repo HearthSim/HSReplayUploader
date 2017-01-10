@@ -14,12 +14,14 @@ namespace HSReplayUploader
 			var metaData = new UploadMetaData();
 
 			var serverInfo = Reflection.GetServerInfo();
-
+			if(serverInfo == null)
+				Util.DebugLog?.WriteLine("UploadMetaDataGenerator: ServerInfo=null");
 			while(serverInfo == null)
 			{
 				await Task.Delay(500);
 				serverInfo = Reflection.GetServerInfo();
 			}
+			Util.DebugLog?.WriteLine("UploadMetaDataGenerator: Found ServerInfo");
 
 			metaData.AuroraPassword = serverInfo.AuroraPassword;
 			metaData.ServerIp = serverInfo.Address;

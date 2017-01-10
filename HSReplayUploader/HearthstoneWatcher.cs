@@ -118,7 +118,7 @@ namespace HSReplayUploader
 					exception = ex;
 				}
 			}
-			OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, exception));
+			OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData.GameHandle, exception));
 			_deckWatcher.Run();
 		}
 
@@ -137,10 +137,16 @@ namespace HSReplayUploader
 			/// </summary>
 			public Exception Exception { get; }
 
-			internal GameEndEventArgs(bool success, Exception exception = null)
+			/// <summary>
+			/// GameHandle of the started game.
+			/// </summary>
+			public string GameHandle { get; }
+
+			internal GameEndEventArgs(bool success, string gameHandle, Exception exception = null)
 			{
 				UploadSuccessful = success;
 				Exception = exception;
+				GameHandle = gameHandle;
 			}
 		}
 

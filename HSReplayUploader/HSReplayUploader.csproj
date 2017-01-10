@@ -83,6 +83,7 @@
     <Compile Include="LogReader\LogLineItem.cs" />
     <Compile Include="LogReader\LogReaderInfo.cs" />
     <Compile Include="LogReader\LogWatcher.cs" />
+    <Compile Include="ProcWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LogReader\EventArgs\RawLogLineEventArgs.cs" />
     <Compile Include="UploadMetaDataGenerator.cs" />

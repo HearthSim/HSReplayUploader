@@ -18,6 +18,7 @@ namespace HSReplayUploader
 		private readonly SceneMode[] _allowedModes;
 		private readonly LogManager _logManager;
 		private readonly DeckWatcher _deckWatcher;
+		private readonly ProcWatcher _procWatcher;
 		private UploadMetaData _metaData;
 		private bool _running;
 
@@ -61,6 +62,7 @@ namespace HSReplayUploader
 			_allowedModes = allowedModes;
 			_logManager = new LogManager(hearthstoneDir);
 			_deckWatcher = new DeckWatcher(allowedModes);
+			_procWatcher = new ProcWatcher();
 		}
 
 		/// <summary>
@@ -73,9 +75,22 @@ namespace HSReplayUploader
 			if(_running)
 				return;
 			_running = true;
+			_procWatcher.OnProcStopped += ProcWatcherOnProcStopped;
+			_procWatcher.OnProcStarted += ProcWatcherOnProcStarted;
 			_logManager.OnGameStart += HandleGameStart;
 			_logManager.OnGameEnd += HandleGameEnd;
+			_procWatcher.Run();
 			_deckWatcher.Run();
+			await _logManager.StartLogReader();
+		}
+
+		private void ProcWatcherOnProcStarted(object sender) => Util.DebugLog?.WriteLine("HearthstoneWatcher: Found proc");
+
+		private async void ProcWatcherOnProcStopped(object sender)
+		{
+			Util.DebugLog?.WriteLine("HearthstoneWatcher: Hearthstone stopped. Restarting LogWatcher");
+			_deckWatcher.Run();
+			await _logManager.Stop();
 			await _logManager.StartLogReader();
 		}
 
@@ -87,8 +102,11 @@ namespace HSReplayUploader
 		{
 			if(!_running)
 				return;
+			_procWatcher.OnProcStopped -= ProcWatcherOnProcStopped;
+			_procWatcher.OnProcStarted -= ProcWatcherOnProcStarted;
 			_logManager.OnGameStart -= HandleGameStart;
 			_logManager.OnGameEnd -= HandleGameEnd;
+			_procWatcher.Stop();
 			_deckWatcher.Stop();
 			await _logManager.Stop();
 			_running = false;

@@ -3,14 +3,13 @@
   <metadata>
     <id>HSReplayUploader</id>
     <title>HSReplayUploader</title>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <authors>HearthSim</authors>
     <owners>HearthSim</owners>
     <projectUrl>https://github.com/HearthSim/HSReplayUploader</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>HSReplay uploading library</description>
-    <releaseNotes>* Improved game mode detection
-* BREAKING CHANGE: HearthstoneWatcher constructor now takes BnetGameType instead of SceneMode</releaseNotes>
+    <releaseNotes>* Fixed an issue with replay uploading</releaseNotes>
     <copyright>Copyright HearthSim 2016</copyright>
   </metadata>
   <files>

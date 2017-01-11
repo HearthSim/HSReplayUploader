@@ -12,14 +12,24 @@ namespace HSReplayUploader
 	{
 		public static ILog DebugLog { get; set; }
 
-		private static Process HearthstoneProc => Process.GetProcessesByName("Hearthstone").FirstOrDefault();
+		private static Process GetHearthstoneProc()
+		{
+			try
+			{
+				return Process.GetProcessesByName("Hearthstone").FirstOrDefault();
+			}
+			catch(Exception)
+			{
+				return null;
+			}
+		}
 
-		internal static bool HearthstoneIsRunning => HearthstoneProc != null;
+		internal static bool HearthstoneIsRunning => GetHearthstoneProc() != null;
 
 		internal static async Task<string> GetHearthstoneDir()
 		{
 			Process proc;
-			while((proc = HearthstoneProc) == null)
+			while((proc = GetHearthstoneProc()) == null)
 				await Task.Delay(500);
 			var dir = new FileInfo(proc.MainModule.FileName).Directory?.FullName;
 			return dir;

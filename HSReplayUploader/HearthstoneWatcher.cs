@@ -15,7 +15,7 @@ namespace HSReplayUploader
 	public class HearthstoneWatcher
 	{
 		private readonly HsReplayClient _client;
-		private readonly SceneMode[] _allowedModes;
+		private readonly BnetGameType[] _allowedModes;
 		private readonly LogManager _logManager;
 		private readonly DeckWatcher _deckWatcher;
 		private readonly ProcWatcher _procWatcher;
@@ -30,9 +30,8 @@ namespace HSReplayUploader
 		public delegate void GameEndEventHandler(object sender, GameEndEventArgs args);
 
 		/// <summary>
-		/// Called when the current game ends and the upload finished.
-		/// EventArgs: UploadSuccessful will be false and Exception null,
-		/// if the last known SceneMode does not match the allowedModes passed to the constructor.
+		/// Called if GameMode matches one of the modes specified in the constructor,
+		/// when the current game ends and the upload finished.
 		/// </summary>
 		public event GameEndEventHandler OnGameEnd;
 
@@ -44,24 +43,25 @@ namespace HSReplayUploader
 		public delegate void GameStartEventHandler(object sender, GameStartEventArgs args);
 
 		/// <summary>
-		/// Called when a new game starts.
+		/// Called if GameMode matches on of the modes specified in the constructor,
+		/// when a new game starts.
 		/// </summary>
 		public event GameStartEventHandler OnGameStart;
 
 		/// <summary>
 		/// </summary>
 		/// <param name="client">HsReplay client</param>
-		/// <param name="allowedModes">Array of SceneModes (i.e. game screen before the game starts), for which which the game should be uploaded.</param>
+		/// <param name="allowedModes">Array of BnetGameTypes, for which which the game should be uploaded.</param>
 		/// <param name="hearthstoneDir">
 		/// (Recommended) Hearthstone installation directory. 
 		/// This will try to automatically find the directory if not provided.
 		/// </param>
-		public HearthstoneWatcher(HsReplayClient client, SceneMode[] allowedModes, string hearthstoneDir = null)
+		public HearthstoneWatcher(HsReplayClient client, BnetGameType[] allowedModes, string hearthstoneDir = null)
 		{ 
 			_client = client;
 			_allowedModes = allowedModes;
 			_logManager = new LogManager(hearthstoneDir);
-			_deckWatcher = new DeckWatcher(allowedModes);
+			_deckWatcher = new DeckWatcher();
 			_procWatcher = new ProcWatcher();
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher: HearthstoneDir={hearthstoneDir}, allowedModes={allowedModes.Select(x => x.ToString()).Aggregate((c, n) => c + ", " + n)}");
 		}
@@ -130,16 +130,18 @@ namespace HSReplayUploader
 			var build = Util.GetHearthstoneBuild(_logManager.HearthstoneDir);
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: foundDeck={deck != null}, build={build}");
 			_metaData = await UploadMetaDataGenerator.Generate(deck, build);
-			OnGameStart?.Invoke(this, new GameStartEventArgs(_deckWatcher.LastKnownMode, _metaData.GameHandle));
-			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: Game Started. LastKnownMode={_deckWatcher.LastKnownMode}, GameHandle={_metaData.GameHandle}");
+			var invokeStart = _metaData.GameType.HasValue && _allowedModes.Contains((BnetGameType)_metaData.GameType);
+			if(invokeStart)
+				OnGameStart?.Invoke(this, new GameStartEventArgs((BnetGameType)_metaData.GameType, _metaData.GameHandle));
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: Game Started. GameType={_metaData.GameType}, GameHandle={_metaData.GameHandle}, invokeStart={invokeStart}");
 		}
 
 		private async void HandleGameEnd(object sender, LogGameEndEventArgs args)
 		{
 			Exception exception = null;
 			string replayUrl = null;
-			var uploadGame = _allowedModes.Contains(_deckWatcher.LastKnownMode);
-			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} (LastKnownMode={_deckWatcher.LastKnownMode})");
+			var uploadGame = (_metaData?.GameType.HasValue ?? false) && _allowedModes.Contains((BnetGameType)_metaData.GameType);
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} GameType={_metaData?.GameType}");
 			if(uploadGame)
 			{
 				try
@@ -151,8 +153,9 @@ namespace HSReplayUploader
 					exception = ex;
 				}
 			}
-			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Upload Successful={replayUrl != null}, Exception={exception}");
-			OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData.GameHandle, exception));
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Upload Successful={replayUrl != null}, url={replayUrl} Exception={exception}, invokeEnd={uploadGame}");
+			if(uploadGame)
+				OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData.GameHandle, exception));
 			_deckWatcher.Run();
 		}
 
@@ -190,16 +193,16 @@ namespace HSReplayUploader
 		public class GameStartEventArgs : EventArgs
 		{
 			/// <summary>
-			/// Last known SceneMode (i.e. game screen) before the game started.
+			/// GameMode of current game
 			/// </summary>
-			public SceneMode Mode { get; }
+			public BnetGameType Mode { get; }
 
 			/// <summary>
 			/// GameHandle of the started game.
 			/// </summary>
 			public string GameHandle { get; }
 
-			internal GameStartEventArgs(SceneMode mode, string gameHandle)
+			internal GameStartEventArgs(BnetGameType mode, string gameHandle)
 			{
 				Mode = mode;
 				GameHandle = gameHandle;

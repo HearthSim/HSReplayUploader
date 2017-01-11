@@ -1,6 +1,6 @@
 namespace HSReplayUploader.HearthstoneEnums
 {
-	internal enum BnetGameType
+	public enum BnetGameType
 	{
 		BGT_UNKNOWN = 0,
 		BGT_FRIENDS = 1,

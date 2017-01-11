@@ -9,17 +9,12 @@ namespace HSReplayUploader
 {
 	internal class DeckWatcher
 	{
-		private readonly SceneMode[] _modes;
+		private readonly SceneMode[] _modes = { SceneMode.ADVENTURE, SceneMode.FRIENDLY, SceneMode.TAVERN_BRAWL, SceneMode.TOURNAMENT };
 		public List<Deck> Decks { get; private set; }
 		public long SelectedDeckId { get; private set; }
 		public SceneMode LastKnownMode { get; private set; }
 
 		public Deck SelectedDeck => Decks?.FirstOrDefault(x => x.Id == SelectedDeckId);
-
-		public DeckWatcher(SceneMode[] modes)
-		{
-			_modes = modes;
-		}
 
 		private bool _running;
 		private bool _watch;

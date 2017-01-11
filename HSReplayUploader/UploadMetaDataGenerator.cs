@@ -54,7 +54,7 @@ namespace HSReplayUploader
 
 			var opposing = new UploadMetaData.Player();
 			if(matchInfo.OpposingPlayer.CardBackId > 0)
-				opposing.Cardback = matchInfo.LocalPlayer.CardBackId;
+				opposing.Cardback = matchInfo.OpposingPlayer.CardBackId;
 
 			metaData.Player1 = matchInfo.LocalPlayer.Id == 1 ? friendly : opposing;
 			metaData.Player2 = matchInfo.LocalPlayer.Id == 2 ? friendly : opposing;

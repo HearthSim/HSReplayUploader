@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using HSReplay;
 using System.Threading.Tasks;
+using HSReplayUploader.Exceptions;
 using HSReplayUploader.HearthstoneEnums;
 using HSReplayUploader.LogReader;
 using HSReplayUploader.LogReader.EventArgs;
@@ -71,6 +72,9 @@ namespace HSReplayUploader
 		/// If hearthstoneDir was not provided in the ctor, this will not return until Hearthstone is running and the directory was detected.
 		/// </summary>
 		/// <returns></returns>
+		/// <exception cref="HearthstoneInstallNotFoundException">
+		/// Thrown if hearthstoenDir was not specified and automatically finding the install directory failed
+		/// </exception>
 		public async Task Start()
 		{
 			Util.DebugLog?.WriteLine("HearthstoneWatcher.Start: Starting...");

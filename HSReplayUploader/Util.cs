@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using HSReplayUploader.Exceptions;
 using HSReplayUploader.HearthstoneEnums;
 using static HSReplayUploader.HearthstoneEnums.BnetGameType;
 
@@ -10,6 +11,8 @@ namespace HSReplayUploader
 {
 	public static class Util
 	{
+		private const int GetInstallMaxTries = 10;
+
 		public static ILog DebugLog { get; set; }
 
 		private static Process GetHearthstoneProc()
@@ -28,11 +31,23 @@ namespace HSReplayUploader
 
 		internal static async Task<string> GetHearthstoneDir()
 		{
-			Process proc;
-			while((proc = GetHearthstoneProc()) == null)
-				await Task.Delay(500);
-			var dir = new FileInfo(proc.MainModule.FileName).Directory?.FullName;
-			return dir;
+			Exception exception = null;
+			for(var i = 0; i < GetInstallMaxTries; i++)
+			{
+				Process proc;
+				while((proc = GetHearthstoneProc()) == null)
+					await Task.Delay(500);
+				try
+				{
+					return new FileInfo(proc.MainModule.FileName).Directory?.FullName;
+				}
+				catch(Exception ex)
+				{
+					exception = ex;
+					await Task.Delay(500);
+				}
+			}
+			throw new HearthstoneInstallNotFoundException("Could not find Hearthstone install directory.", exception);
 		}
 
 		internal static int? GetHearthstoneBuild(string installDir)

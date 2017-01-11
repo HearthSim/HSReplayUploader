@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeckWatcher.cs" />
+    <Compile Include="Exceptions\HearthstoneInstallNotFoundException.cs" />
     <Compile Include="HearthstoneEnums\BnetGameType.cs" />
     <Compile Include="HearthstoneEnums\FormatType.cs" />
     <Compile Include="HearthstoneEnums\GameType.cs" />

@@ -38,7 +38,7 @@ namespace HSReplayUploader
 			var friendly = new UploadMetaData.Player()
 			{
 				DeckId = deck?.Id,
-				DeckList = deck?.Cards.SelectMany(x => Enumerable.Repeat(x.Id, x.Count)).ToArray()
+				DeckList = deck?.Cards?.Where(x => x != null).SelectMany(x => Enumerable.Repeat(x.Id, x.Count)).ToArray()
 			};
 			if(matchInfo.LocalPlayer.CardBackId > 0)
 				friendly.Cardback = matchInfo.LocalPlayer.CardBackId;

@@ -3,13 +3,14 @@
   <metadata>
     <id>HSReplayUploader</id>
     <title>HSReplayUploader</title>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
     <authors>HearthSim</authors>
     <owners>HearthSim</owners>
     <projectUrl>https://github.com/HearthSim/HSReplayUploader</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>HSReplay uploading library</description>
-    <releaseNotes>* Fixed an issue with Hearthstone installation detection</releaseNotes>
+    <releaseNotes>* Fixed an issue where the uploaded log could contain more than one game when reconnecting
+* Hopefully fixed a possible crash during GameStart</releaseNotes>
     <copyright>Copyright HearthSim 2016</copyright>
   </metadata>
   <files>

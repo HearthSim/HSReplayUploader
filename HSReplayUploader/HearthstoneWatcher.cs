@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using HSReplay;
 using System.Threading.Tasks;
@@ -150,7 +151,16 @@ namespace HSReplayUploader
 			{
 				try
 				{
-					replayUrl = await _client.UploadLog(_metaData, args.PowerLog);
+					var trimmedLog = new List<string>();
+					for(var i = args.PowerLog.Count - 1; i > 0; i++)
+					{
+						var line = args.PowerLog[i];
+						trimmedLog.Add(line);
+						if(line.Contains("CREATE_GAME"))
+							break;
+					}
+					trimmedLog.Reverse();
+					replayUrl = await _client.UploadLog(_metaData, trimmedLog);
 				}
 				catch(Exception ex)
 				{

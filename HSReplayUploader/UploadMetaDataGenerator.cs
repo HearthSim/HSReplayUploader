@@ -13,16 +13,7 @@ namespace HSReplayUploader
 		{
 			var metaData = new UploadMetaData();
 
-			var serverInfo = Reflection.GetServerInfo();
-			if(serverInfo == null)
-				Util.DebugLog?.WriteLine("UploadMetaDataGenerator: ServerInfo=null");
-			while(serverInfo == null)
-			{
-				await Task.Delay(500);
-				serverInfo = Reflection.GetServerInfo();
-			}
-			Util.DebugLog?.WriteLine("UploadMetaDataGenerator: Found ServerInfo");
-
+			var serverInfo = await TryGetReflection(Reflection.GetServerInfo);
 			metaData.AuroraPassword = serverInfo.AuroraPassword;
 			metaData.ServerIp = serverInfo.Address;
 			metaData.ClientHandle = serverInfo.ClientHandle.ToString();
@@ -39,7 +30,7 @@ namespace HSReplayUploader
 			var gameType = Reflection.GetGameType();
 			metaData.GameType = Util.GetBnetGameType(gameType, format);
 
-			var matchInfo = Reflection.GetMatchInfo();
+			var matchInfo = await TryGetReflection(Reflection.GetMatchInfo);
 			metaData.FriendlyPlayerId = matchInfo.LocalPlayer.Id;
 			metaData.LadderSeason = matchInfo.RankedSeasonId;
 			metaData.ScenarioId = matchInfo.MissionId;
@@ -65,5 +56,21 @@ namespace HSReplayUploader
 			return metaData;
 		}
 
+		private static async Task<T> TryGetReflection<T>(Func<T> action)
+		{
+			var value = action.Invoke();
+			if(value != null)
+				return value;
+			Util.DebugLog?.WriteLine($"UploadMetaDataGenerator: {action.Method.Name} is null");
+			while(true)
+			{
+				await Task.Delay(500);
+				if((value = action.Invoke()) != null)
+				{
+					Util.DebugLog?.WriteLine($"UploadMetaDataGenerator: found {action.Method.Name}");
+					return value;
+				}
+			}
+		}
 	}
 }

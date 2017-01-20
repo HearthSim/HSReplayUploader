@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -64,6 +65,7 @@ namespace HSReplayUploader.LogReader
 		private void OnLogWatcherOnOnNewLine(object sender, LogLineEventArgs args)
 		{
 			var lines = args.Lines.Select(x => x.Line).ToList();
+			var invokeEnd = false;
 			foreach(var line in lines)
 			{
 				if(_gameState == GameState.InMenu && line.Contains("CREATE_GAME"))
@@ -74,11 +76,13 @@ namespace HSReplayUploader.LogReader
 				}
 				else if(_gameState == GameState.Playing && line.Contains("tag=STATE value=COMPLETE"))
 				{
-					OnGameEnd?.Invoke(this, new LogGameEndEventArgs(_powerLog));
+					invokeEnd = true;
 					_gameState = GameState.InMenu;
 				}
 			}
 			_powerLog.AddRange(lines);
+			if (invokeEnd)
+				OnGameEnd?.Invoke(this, new LogGameEndEventArgs(_powerLog));
 		}
 
 	}

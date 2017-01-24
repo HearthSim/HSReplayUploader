@@ -139,7 +139,7 @@ namespace HSReplayUploader
 			var accInfo = Reflection.GetAccountId();
 			var invokeStart = _metaData.GameType.HasValue && _allowedModes.Contains((BnetGameType)_metaData.GameType);
 			if(invokeStart)
-				OnGameStart?.Invoke(this, new GameStartEventArgs((BnetGameType)_metaData.GameType, _metaData.GameHandle, accInfo?.Hi ?? 0, accInfo?.Lo ?? 0));
+				OnGameStart?.Invoke(this, new GameStartEventArgs((BnetGameType)(_metaData.GameType ?? 0), _metaData.GameHandle, accInfo?.Hi ?? 0, accInfo?.Lo ?? 0));
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: Game Started. GameType={_metaData.GameType}, GameHandle={_metaData.GameHandle}, invokeStart={invokeStart}, accHi={accInfo?.Hi}, accLo={accInfo?.Lo}");
 		}
 
@@ -147,7 +147,7 @@ namespace HSReplayUploader
 		{
 			Exception exception = null;
 			string replayUrl = null;
-			var uploadGame = (_metaData?.GameType.HasValue ?? false) && _allowedModes.Contains((BnetGameType)_metaData.GameType);
+			var uploadGame = _allowedModes.Contains((BnetGameType)(_metaData?.GameType ?? 0));
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} GameType={_metaData?.GameType}");
 			if(uploadGame)
 			{
@@ -171,7 +171,7 @@ namespace HSReplayUploader
 			}
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Upload Successful={replayUrl != null}, url={replayUrl} Exception={exception}, invokeEnd={uploadGame}");
 			if(uploadGame)
-				OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData.GameHandle, exception));
+				OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData?.GameHandle, exception));
 			_deckWatcher.Run();
 		}
 

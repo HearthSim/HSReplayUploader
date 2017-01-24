@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HSReplay;
 using System.Threading.Tasks;
+using HearthMirror;
 using HSReplayUploader.Exceptions;
 using HSReplayUploader.HearthstoneEnums;
 using HSReplayUploader.LogReader;
@@ -135,10 +136,11 @@ namespace HSReplayUploader
 			var build = Util.GetHearthstoneBuild(_logManager.HearthstoneDir);
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: foundDeck={deck != null}, build={build}");
 			_metaData = await UploadMetaDataGenerator.Generate(deck, build);
+			var accInfo = Reflection.GetAccountId();
 			var invokeStart = _metaData.GameType.HasValue && _allowedModes.Contains((BnetGameType)_metaData.GameType);
 			if(invokeStart)
-				OnGameStart?.Invoke(this, new GameStartEventArgs((BnetGameType)_metaData.GameType, _metaData.GameHandle));
-			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: Game Started. GameType={_metaData.GameType}, GameHandle={_metaData.GameHandle}, invokeStart={invokeStart}");
+				OnGameStart?.Invoke(this, new GameStartEventArgs((BnetGameType)_metaData.GameType, _metaData.GameHandle, accInfo?.Hi ?? 0, accInfo?.Lo ?? 0));
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameStart: Game Started. GameType={_metaData.GameType}, GameHandle={_metaData.GameHandle}, invokeStart={invokeStart}, accHi={accInfo?.Hi}, accLo={accInfo?.Lo}");
 		}
 
 		private async void HandleGameEnd(object sender, LogGameEndEventArgs args)
@@ -216,10 +218,22 @@ namespace HSReplayUploader
 			/// </summary>
 			public string GameHandle { get; }
 
-			internal GameStartEventArgs(BnetGameType mode, string gameHandle)
+			/// <summary>
+			/// Account Hi value for the currently logged in Hearthstone account
+			/// </summary>
+			public ulong AccountHi { get; }
+
+			/// <summary>
+			/// Account Lo value for the currently logged in Hearthstone account
+			/// </summary>
+			public ulong AccountLo { get; }
+
+			internal GameStartEventArgs(BnetGameType mode, string gameHandle, ulong accHi, ulong accLo)
 			{
 				Mode = mode;
 				GameHandle = gameHandle;
+				AccountHi = accHi;
+				AccountLo = accLo;
 			}
 		}
 	}

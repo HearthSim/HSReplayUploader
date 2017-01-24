@@ -3,13 +3,13 @@
   <metadata>
     <id>HSReplayUploader</id>
     <title>HSReplayUploader</title>
-    <version>1.1.5</version>
+    <version>1.1.6</version>
     <authors>HearthSim</authors>
     <owners>HearthSim</owners>
     <projectUrl>https://github.com/HearthSim/HSReplayUploader</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>HSReplay uploading library</description>
-    <releaseNotes>* Fixed an issue where OnGameEnd would trigger before the entire log was stored</releaseNotes>
+    <releaseNotes>+ Added Account hi and lo values to GameStartEventArgs</releaseNotes>
     <copyright>Copyright HearthSim 2016</copyright>
   </metadata>
   <files>

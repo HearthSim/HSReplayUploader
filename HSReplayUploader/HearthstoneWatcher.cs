@@ -62,7 +62,7 @@ namespace HSReplayUploader
 		public HearthstoneWatcher(HsReplayClient client, BnetGameType[] allowedModes, string hearthstoneDir = null)
 		{ 
 			_client = client;
-			_allowedModes = allowedModes;
+			_allowedModes = allowedModes.Concat(new [] {BnetGameType.BGT_UNKNOWN}).ToArray();
 			_logManager = new LogManager(hearthstoneDir);
 			_deckWatcher = new DeckWatcher();
 			_procWatcher = new ProcWatcher();

@@ -9,7 +9,7 @@ namespace HSReplayUploader
 {
 	internal class UploadMetaDataGenerator
 	{
-		public static async Task<UploadMetaData> Generate(Deck deck, int? hdtBuild)
+		public static async Task<UploadMetaData> Generate(Deck deck, int? hearthstoneBuild)
 		{
 			var metaData = new UploadMetaData();
 
@@ -50,7 +50,7 @@ namespace HSReplayUploader
 			metaData.Player1 = matchInfo.LocalPlayer.Id == 1 ? friendly : opposing;
 			metaData.Player2 = matchInfo.LocalPlayer.Id == 2 ? friendly : opposing;
 
-			metaData.HearthstoneBuild = hdtBuild;
+			metaData.HearthstoneBuild = hearthstoneBuild;
 			metaData.MatchStart = DateTime.Now.ToString("o");
 
 			return metaData;

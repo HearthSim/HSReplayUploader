@@ -24,7 +24,10 @@ namespace HSReplayUploader
 			Util.DebugLog?.WriteLine("DeckWatcher.Run: Starting.");
 			_watch = true;
 			if(!_running)
+			{
+				SelectedDeckId = 0;
 				Watch();
+			}
 		}
 
 		public void Stop()

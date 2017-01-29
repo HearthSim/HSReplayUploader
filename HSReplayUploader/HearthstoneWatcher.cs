@@ -173,6 +173,7 @@ namespace HSReplayUploader
 			if(uploadGame)
 				OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData?.GameHandle, exception));
 			_deckWatcher.Run();
+			_metaData = null;
 		}
 
 		/// <summary>

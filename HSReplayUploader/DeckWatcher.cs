@@ -14,7 +14,7 @@ namespace HSReplayUploader
 		public long SelectedDeckId { get; private set; }
 		public SceneMode LastKnownMode { get; private set; }
 
-		public Deck SelectedDeck => Decks?.FirstOrDefault(x => x.Id == SelectedDeckId);
+		public Deck SelectedDeck => Decks?.FirstOrDefault(x => x.Id > 0 && x.Id == SelectedDeckId);
 
 		private bool _running;
 		private bool _watch;

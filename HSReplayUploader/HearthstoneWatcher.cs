@@ -147,8 +147,8 @@ namespace HSReplayUploader
 		{
 			Exception exception = null;
 			string replayUrl = null;
-			var uploadGame = _allowedModes.Contains((BnetGameType)(_metaData?.GameType ?? 0));
-			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} GameType={_metaData?.GameType}");
+			var uploadGame = _allowedModes.Contains((BnetGameType)(_metaData?.GameType ?? 0)) && !(_metaData?.SpectatorMode ?? false);
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} GameType={_metaData?.GameType} Spectator={_metaData?.SpectatorMode}");
 			if(uploadGame)
 			{
 				try

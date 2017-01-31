@@ -18,7 +18,7 @@ namespace HSReplayUploader
 		public HsReplayClient(string apiKey, bool testData = false)
 		{
 			_testData = testData;
-			_client = new HSReplay.HsReplayClient(apiKey, "HSReplayUploader/1.1.7", testData);
+			_client = new HSReplay.HsReplayClient(apiKey, "HSReplayUploader/1.1.8", testData);
 		}
 
 		/// <summary>

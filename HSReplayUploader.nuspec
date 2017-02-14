@@ -3,14 +3,14 @@
   <metadata>
     <id>HSReplayUploader</id>
     <title>HSReplayUploader</title>
-    <version>1.1.8</version>
+    <version>1.1.9</version>
     <authors>HearthSim</authors>
     <owners>HearthSim</owners>
     <projectUrl>https://github.com/HearthSim/HSReplayUploader</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>HSReplay uploading library</description>
-    <releaseNotes>* Prevent spectator uploads.</releaseNotes>
-    <copyright>Copyright HearthSim 2016</copyright>
+    <releaseNotes>+ Added upload retries.</releaseNotes>
+    <copyright>Copyright HearthSim 2017</copyright>
   </metadata>
   <files>
     <file src="HSReplayUploader\bin\x86\Release\HSReplayUploader.dll" target="lib/net45/HSReplayUploader.dll" />

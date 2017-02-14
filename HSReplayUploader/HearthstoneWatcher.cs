@@ -4,7 +4,6 @@ using System.Linq;
 using HSReplay;
 using System.Threading.Tasks;
 using HearthMirror;
-using HSReplayUploader.Exceptions;
 using HSReplayUploader.HearthstoneEnums;
 using HSReplayUploader.LogReader;
 using HSReplayUploader.LogReader.EventArgs;
@@ -17,6 +16,7 @@ namespace HSReplayUploader
 	/// </summary>
 	public class HearthstoneWatcher
 	{
+		private const int UploadRetries = 2;
 		private readonly HsReplayClient _client;
 		private readonly BnetGameType[] _allowedModes;
 		private readonly LogManager _logManager;
@@ -147,13 +147,15 @@ namespace HSReplayUploader
 		{
 			Exception exception = null;
 			string replayUrl = null;
-			var uploadGame = _allowedModes.Contains((BnetGameType)(_metaData?.GameType ?? 0)) && !(_metaData?.SpectatorMode ?? false);
-			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} GameType={_metaData?.GameType} Spectator={_metaData?.SpectatorMode}");
+			var metaData = _metaData;
+			var uploadGame = _allowedModes.Contains((BnetGameType)(metaData?.GameType ?? 0)) && !(metaData?.SpectatorMode ?? false);
+			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} GameType={metaData?.GameType} Spectator={metaData?.SpectatorMode}");
+
 			if(uploadGame)
 			{
+				var trimmedLog = new List<string>();
 				try
 				{
-					var trimmedLog = new List<string>();
 					for(var i = args.PowerLog.Count - 1; i > 0; i--)
 					{
 						var line = args.PowerLog[i];
@@ -162,16 +164,32 @@ namespace HSReplayUploader
 							break;
 					}
 					trimmedLog.Reverse();
-					replayUrl = await _client.UploadLog(_metaData, trimmedLog);
 				}
-				catch(Exception ex)
+				catch(Exception)
 				{
-					exception = ex;
+					trimmedLog = args.PowerLog;
+				}
+
+				for(var i = 0; i < UploadRetries; i++)
+				{
+					try
+					{
+						replayUrl = await _client.UploadLog(metaData, trimmedLog);
+						break;
+					}
+					catch(Exception ex)
+					{
+						exception = ex;
+					}
+
+					var delay = 5 * (i + 1);
+					Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Upload try #{i + 1} failed. Retrying in {delay}s. Exception={exception}");
+					await Task.Delay(1000 * delay);
 				}
 			}
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Upload Successful={replayUrl != null}, url={replayUrl} Exception={exception}, invokeEnd={uploadGame}");
 			if(uploadGame)
-				OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, _metaData?.GameHandle, exception));
+				OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, metaData?.GameHandle, exception));
 			_deckWatcher.Run();
 			_metaData = null;
 		}

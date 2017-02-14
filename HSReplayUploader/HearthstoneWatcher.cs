@@ -148,6 +148,8 @@ namespace HSReplayUploader
 			Exception exception = null;
 			string replayUrl = null;
 			var metaData = _metaData;
+			_metaData = null;
+			_deckWatcher.Run();
 			var uploadGame = _allowedModes.Contains((BnetGameType)(metaData?.GameType ?? 0)) && !(metaData?.SpectatorMode ?? false);
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Game ended. Uploading={uploadGame} GameType={metaData?.GameType} Spectator={metaData?.SpectatorMode}");
 
@@ -190,8 +192,6 @@ namespace HSReplayUploader
 			Util.DebugLog?.WriteLine($"HearthstoneWatcher.HandleGameEnd: Upload Successful={replayUrl != null}, url={replayUrl} Exception={exception}, invokeEnd={uploadGame}");
 			if(uploadGame)
 				OnGameEnd?.Invoke(this, new GameEndEventArgs(replayUrl != null, metaData?.GameHandle, exception));
-			_deckWatcher.Run();
-			_metaData = null;
 		}
 
 		/// <summary>
